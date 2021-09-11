@@ -4,6 +4,7 @@ describe('a NewThread entities', () => {
   it('should throw error when payload did not contain needed property', () => {
     const payload = {
       title: 'judul',
+      owner: 'user-123',
     };
 
     expect(() => new NewThread(payload)).toThrowError(
@@ -15,6 +16,7 @@ describe('a NewThread entities', () => {
     const payload = {
       title: 123,
       body: true,
+      owner: 'user-123',
     };
 
     expect(() => new NewThread(payload)).toThrowError(
@@ -27,6 +29,7 @@ describe('a NewThread entities', () => {
       title:
         'juduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljuduljudul',
       body: 'body',
+      owner: 'user-123',
     };
 
     expect(() => new NewThread(payload)).toThrowError(
@@ -38,6 +41,7 @@ describe('a NewThread entities', () => {
     const payload = {
       title: 'judul',
       body: 'body',
+      owner: 'user-123',
     };
 
     const { title, body } = new NewThread(payload);

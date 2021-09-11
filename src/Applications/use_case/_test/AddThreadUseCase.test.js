@@ -8,6 +8,7 @@ describe('AddThreadUseCase', () => {
     const payload = {
       title: 'judul',
       body: 'body',
+      owner: 'user-123',
     };
 
     const expectedAddedThread = new AddedThread({
