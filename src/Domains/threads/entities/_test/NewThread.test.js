@@ -33,4 +33,16 @@ describe('a NewThread entities', () => {
       'NEW_THREAD.TITLE_LIMIT_CHAR'
     );
   });
+
+  it('should create newThread object correctly', () => {
+    const payload = {
+      title: 'judul',
+      body: 'body',
+    };
+
+    const { title, body } = new NewThread(payload);
+
+    expect(title).toEqual(payload.title);
+    expect(body).toEqual(payload.body);
+  });
 });
