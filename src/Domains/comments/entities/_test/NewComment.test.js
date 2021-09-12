@@ -15,6 +15,7 @@ describe('a NewComment entities', () => {
     const payload = {
       content: 123,
       owner: true,
+      threadId: 'thread-123',
     };
 
     expect(() => new NewComment(payload)).toThrowError(
@@ -26,11 +27,13 @@ describe('a NewComment entities', () => {
     const payload = {
       content: 'comment',
       owner: 'user-123',
+      threadId: 'thread-123',
     };
 
-    const { content, owner } = new NewComment(payload);
+    const { content, owner, threadId } = new NewComment(payload);
 
     expect(content).toEqual(payload.content);
     expect(owner).toEqual(payload.owner);
+    expect(threadId).toEqual(payload.threadId);
   });
 });
