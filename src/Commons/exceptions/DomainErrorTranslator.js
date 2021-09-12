@@ -33,6 +33,15 @@ DomainErrorTranslator._directories = {
     new InvariantError('harus mengirimkan token refresh'),
   'DELETE_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION':
     new InvariantError('refresh token harus string'),
+  'NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
+    'tidak dapat menambahkan thread baru karena properti yang dibutuhkan tidak ada'
+  ),
+  'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
+    'tidak dapat menambahkan thread baru karena tipe data tidak sesuai'
+  ),
+  'NEW_THREAD.TITLE_LIMIT_CHAR': new InvariantError(
+    'tidak dapat membuat user baru karena karakter username melebihi batas limit'
+  ),
 };
 
 module.exports = DomainErrorTranslator;
