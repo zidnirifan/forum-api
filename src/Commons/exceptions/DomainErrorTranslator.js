@@ -42,6 +42,12 @@ DomainErrorTranslator._directories = {
   'NEW_THREAD.TITLE_LIMIT_CHAR': new InvariantError(
     'tidak dapat membuat user baru karena karakter username melebihi batas limit'
   ),
+  'NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
+    'tidak dapat menambahkan comment baru karena properti yang dibutuhkan tidak ada'
+  ),
+  'NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
+    'tidak dapat menambahkan comment baru karena tipe data tidak sesuai'
+  ),
 };
 
 module.exports = DomainErrorTranslator;
