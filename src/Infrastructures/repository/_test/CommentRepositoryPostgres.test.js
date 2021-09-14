@@ -56,6 +56,18 @@ describe('CommentRepositoryPostgres', () => {
     });
   });
 
+  describe('isCommentExist function', () => {
+    it('should throw NotFoundError when comment is not exist', async () => {
+      const commentId = 'comment-99';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await expect(
+        commentRepositoryPostgres.isCommentExist(commentId)
+      ).rejects.toThrowError(NotFoundError);
+    });
+  });
+
   describe('verifyCommentOwner function', () => {
     it('should throw AuthorizationError when he is not owner of the comment', async () => {
       const payload = {
@@ -73,19 +85,6 @@ describe('CommentRepositoryPostgres', () => {
       await expect(
         commentRepositoryPostgres.verifyCommentOwner(payload)
       ).rejects.toThrowError(AuthorizationError);
-    });
-
-    it('should throw NotFoundError when comment did not exist', async () => {
-      const payload = {
-        owner: 'user-123',
-        commentId: 'comment-123',
-      };
-
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-
-      await expect(
-        commentRepositoryPostgres.verifyCommentOwner(payload)
-      ).rejects.toThrowError(NotFoundError);
     });
 
     it('should not throw AuthorizationError when he is owner of the comment', async () => {
