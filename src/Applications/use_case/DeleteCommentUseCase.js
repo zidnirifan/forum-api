@@ -1,4 +1,4 @@
-class AddCommentUseCase {
+class DeleteCommentUseCase {
   constructor({ commentRepository, threadRepository }) {
     this._commentRepository = commentRepository;
     this._threadRepository = threadRepository;
@@ -8,6 +8,7 @@ class AddCommentUseCase {
     this._verifyPayload(payload);
     const { commentId, owner, threadId } = payload;
     await this._threadRepository.isThreadExist(threadId);
+    await this._commentRepository.isCommentExist(commentId);
     await this._commentRepository.verifyCommentOwner({ commentId, owner });
     await this._commentRepository.deleteComment(commentId);
   }
@@ -29,4 +30,4 @@ class AddCommentUseCase {
   }
 }
 
-module.exports = AddCommentUseCase;
+module.exports = DeleteCommentUseCase;
