@@ -66,6 +66,17 @@ describe('CommentRepositoryPostgres', () => {
         commentRepositoryPostgres.isCommentExist(commentId)
       ).rejects.toThrowError(NotFoundError);
     });
+
+    it('should not throw NotFoundError when comment is exist', async () => {
+      const commentId = 'comment-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+      await CommentsTableTestHelper.addComment({ id: commentId });
+
+      await expect(
+        commentRepositoryPostgres.isCommentExist(commentId)
+      ).resolves.not.toThrowError(NotFoundError);
+    });
   });
 
   describe('verifyCommentOwner function', () => {
