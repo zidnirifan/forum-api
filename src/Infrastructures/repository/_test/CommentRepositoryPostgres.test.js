@@ -113,4 +113,25 @@ describe('CommentRepositoryPostgres', () => {
       ).resolves.not.toThrowError(AuthorizationError);
     });
   });
+
+  describe('deleteComment function', () => {
+    it('should update is_delete to true', async () => {
+      const payload = {
+        owner: 'user-123',
+        commentId: 'comment-123',
+      };
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment(payload);
+      await commentRepositoryPostgres.deleteComment(payload.commentId);
+
+      const deletedComment = await CommentsTableTestHelper.findCommentById(
+        payload.commentId
+      );
+      console.log(deletedComment);
+
+      expect(deletedComment[0].is_delete).toEqual(true);
+    });
+  });
 });
