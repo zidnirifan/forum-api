@@ -5,6 +5,8 @@ const NewComment = require('../../../Domains/comments/entities/NewComment');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 
 describe('CommentRepositoryPostgres', () => {
   beforeEach(async () => {
@@ -51,6 +53,54 @@ describe('CommentRepositoryPostgres', () => {
       });
       expect(foundComment).toHaveLength(1);
       expect(addedComment).toStrictEqual(expectedAddedComment);
+    });
+  });
+
+  describe('verifyCommentOwner function', () => {
+    it('should throw AuthorizationError when he is not owner of the comment', async () => {
+      const payload = {
+        owner: 'user-99',
+        commentId: 'comment-123',
+      };
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({
+        owner: 'user-123',
+        id: 'comment-123',
+      });
+
+      await expect(
+        commentRepositoryPostgres.verifyCommentOwner(payload)
+      ).rejects.toThrowError(AuthorizationError);
+    });
+
+    it('should throw NotFoundError when comment did not exist', async () => {
+      const payload = {
+        owner: 'user-123',
+        commentId: 'comment-123',
+      };
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await expect(
+        commentRepositoryPostgres.verifyCommentOwner(payload)
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should not throw AuthorizationError when he is owner of the comment', async () => {
+      const payload = {
+        owner: 'user-123',
+        commentId: 'comment-123',
+      };
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment(payload);
+
+      await expect(
+        commentRepositoryPostgres.verifyCommentOwner(payload)
+      ).resolves.not.toThrowError(AuthorizationError);
     });
   });
 });
