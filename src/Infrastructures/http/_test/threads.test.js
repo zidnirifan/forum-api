@@ -22,7 +22,7 @@ describe('/threads endpoint', () => {
         body: 'body',
       };
 
-      const accessToken = await ServerTestHelper.getAccessToken();
+      const accessToken = await ServerTestHelper.getAccessToken({});
 
       const server = await createServer(container);
 
@@ -67,7 +67,7 @@ describe('/threads endpoint', () => {
         title: 'title',
       };
 
-      const accessToken = await ServerTestHelper.getAccessToken();
+      const accessToken = await ServerTestHelper.getAccessToken({});
 
       const server = await createServer(container);
 
@@ -115,7 +115,7 @@ describe('/threads endpoint', () => {
         body: true,
       };
 
-      const accessToken = await ServerTestHelper.getAccessToken();
+      const accessToken = await ServerTestHelper.getAccessToken({});
 
       const server = await createServer(container);
 
@@ -143,7 +143,7 @@ describe('/threads endpoint', () => {
         body: 'body',
       };
 
-      const accessToken = await ServerTestHelper.getAccessToken();
+      const accessToken = await ServerTestHelper.getAccessToken({});
 
       const server = await createServer(container);
 

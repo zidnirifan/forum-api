@@ -24,7 +24,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       };
       const threadId = 'thread-123';
 
-      const accessToken = await ServerTestHelper.getAccessToken();
+      const accessToken = await ServerTestHelper.getAccessToken({});
       await ThreadsTableTestHelper.addThread({ id: threadId });
 
       const server = await createServer(container);
@@ -71,7 +71,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       const requestPayload = {
         content: 'comment',
       };
-      const accessToken = await ServerTestHelper.getAccessToken();
+      const accessToken = await ServerTestHelper.getAccessToken({});
 
       const server = await createServer(container);
 
@@ -94,7 +94,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       const requestPayload = {};
       const threadId = 'thread-123';
 
-      const accessToken = await ServerTestHelper.getAccessToken();
+      const accessToken = await ServerTestHelper.getAccessToken({});
       await ThreadsTableTestHelper.addThread({ id: threadId });
 
       const server = await createServer(container);
@@ -122,7 +122,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       };
       const threadId = 'thread-123';
 
-      const accessToken = await ServerTestHelper.getAccessToken();
+      const accessToken = await ServerTestHelper.getAccessToken({});
       await ThreadsTableTestHelper.addThread({ id: threadId });
 
       const server = await createServer(container);
@@ -142,6 +142,127 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(responseJson.message).toEqual(
         'tidak dapat menambahkan comment baru karena tipe data tidak sesuai'
       );
+    });
+  });
+
+  describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
+    it('should response 200 status code if threadId and commentId valid', async () => {
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+
+      const accessToken = await ServerTestHelper.getAccessToken({});
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+      await CommentsTableTestHelper.addComment({ id: commentId });
+
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        url: `/threads/${threadId}/comments/${commentId}`,
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+
+    it(`should response 401 status code and show Missing Authentication message
+      when miss authentication`, async () => {
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+      await CommentsTableTestHelper.addComment({ id: commentId });
+
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        url: `/threads/${threadId}/comments/${commentId}`,
+        method: 'DELETE',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(401);
+      expect(responseJson.error).toEqual('Unauthorized');
+      expect(responseJson.message).toEqual('Missing authentication');
+    });
+
+    it('should response 404 status code when comment not found', async () => {
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+
+      const accessToken = await ServerTestHelper.getAccessToken({});
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        url: `/threads/${threadId}/comments/${commentId}`,
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.message).toEqual('Comment tidak ditemukan');
+    });
+
+    it('should response 404 status code when thread not found', async () => {
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+
+      const accessToken = await ServerTestHelper.getAccessToken({});
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+      await CommentsTableTestHelper.addComment({ id: commentId });
+
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        url: `/threads/thread-99/comments/${commentId}`,
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.message).toEqual('Thread tidak ditemukan');
+    });
+
+    it('should response 403 status code when using not owner user', async () => {
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+      const owner = 'user-123';
+
+      await UsersTableTestHelper.addUser({ id: owner });
+      const accessTokenOtherUser = await ServerTestHelper.getAccessToken({
+        id: 'other-user',
+        username: 'otheruser',
+      });
+      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await CommentsTableTestHelper.addComment({ id: commentId, owner });
+
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        url: `/threads/${threadId}/comments/${commentId}`,
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessTokenOtherUser}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Anda bukan pemilik comment ini');
     });
   });
 });
