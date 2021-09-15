@@ -129,7 +129,6 @@ describe('CommentRepositoryPostgres', () => {
       const deletedComment = await CommentsTableTestHelper.findCommentById(
         payload.commentId
       );
-      console.log(deletedComment);
 
       expect(deletedComment[0].is_delete).toEqual(true);
     });
