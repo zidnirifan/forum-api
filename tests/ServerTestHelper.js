@@ -3,13 +3,9 @@ const Jwt = require('@hapi/jwt');
 const UsersTableTestHelper = require('./UsersTableTestHelper');
 
 const ServerTestHelper = {
-  async getAccessToken() {
-    const payload = {
-      id: 'user-123',
-      username: 'dicoding',
-    };
-    await UsersTableTestHelper.addUser(payload);
-    return Jwt.token.generate(payload, process.env.ACCESS_TOKEN_KEY);
+  async getAccessToken({ id = 'user-123', username = 'dicoding' }) {
+    await UsersTableTestHelper.addUser({ id, username });
+    return Jwt.token.generate({ id, username }, process.env.ACCESS_TOKEN_KEY);
   },
 };
 
