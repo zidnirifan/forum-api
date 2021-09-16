@@ -17,7 +17,7 @@ exports.up = (pgm) => {
       references: '"users"',
       onDelete: 'cascade',
     },
-    threadId: {
+    thread_id: {
       type: 'VARCHAR(30)',
       references: '"threads"',
       onDelete: 'cascade',
