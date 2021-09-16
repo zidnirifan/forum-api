@@ -133,4 +133,25 @@ describe('CommentRepositoryPostgres', () => {
       expect(deletedComment[0].is_delete).toEqual(true);
     });
   });
+
+  describe('getCommentById', () => {
+    it('should return comment correctly', async () => {
+      const threadId = 'thread-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ threadId });
+
+      const comments = await commentRepositoryPostgres.getCommentsByThreadId(
+        threadId
+      );
+
+      expect(Array.isArray(comments)).toBeTruthy();
+      expect(comments).toHaveLength(1);
+      expect(comments[0].id).toBeDefined();
+      expect(comments[0].content).toBeDefined();
+      expect(comments[0].username).toBeDefined();
+      expect(comments[0].date).toBeDefined();
+    });
+  });
 });
