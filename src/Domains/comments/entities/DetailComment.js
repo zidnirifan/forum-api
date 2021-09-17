@@ -20,7 +20,7 @@ class DetailComment {
       typeof id !== 'string' ||
       typeof content !== 'string' ||
       typeof username !== 'string' ||
-      typeof date !== 'string' ||
+      typeof date !== 'object' ||
       !Array.isArray(replies)
     ) {
       throw new Error('DETAIL_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');

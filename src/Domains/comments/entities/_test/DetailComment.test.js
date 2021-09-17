@@ -30,7 +30,7 @@ describe('a DetailComment entities', () => {
     const payload = {
       id: 'comment-123',
       username: 'user',
-      date: new Date().toISOString(),
+      date: new Date(),
       content: 'comment',
       replies: [
         { id: 'reply-123', content: 'reply', date: '23456', username: 'user' },
