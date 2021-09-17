@@ -29,7 +29,7 @@ describe('DeleteCommentUseCase', () => {
     );
   });
 
-  it('should orchestrating the add comment action correctly', async () => {
+  it('should orchestrating the delete comment action correctly', async () => {
     const payload = {
       owner: 'user-123',
       commentId: 'comment-123',
