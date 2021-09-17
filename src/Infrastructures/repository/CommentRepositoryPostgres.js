@@ -68,8 +68,8 @@ class CommentRepositoryPostgres extends CommentRepository {
       values: [threadId],
     };
 
-    const { rows } = await this._pool.query(query);
-    return mapDeletedComments(rows);
+    const { rows, rowCount } = await this._pool.query(query);
+    return rowCount ? mapDeletedComments(rows) : [];
   }
 }
 

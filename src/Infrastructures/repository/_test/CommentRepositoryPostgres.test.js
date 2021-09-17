@@ -174,5 +174,17 @@ describe('CommentRepositoryPostgres', () => {
       expect(comments[0].username).toBeDefined();
       expect(comments[0].date).toBeDefined();
     });
+
+    it('should return blank array when comments not found', async () => {
+      const threadId = 'thread-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      const comments = await commentRepositoryPostgres.getCommentsByThreadId(
+        threadId
+      );
+
+      expect(comments).toEqual([]);
+    });
   });
 });
