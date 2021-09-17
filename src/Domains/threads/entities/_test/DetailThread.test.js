@@ -9,7 +9,7 @@ describe('a DetailThraed entities', () => {
     };
 
     expect(() => new DetailThread(payload)).toThrowError(
-      'ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY'
+      'DETAIL_THREAD.NOT_CONTAIN_NEEDED_PROPERTY'
     );
   });
 
@@ -24,7 +24,7 @@ describe('a DetailThraed entities', () => {
     };
 
     expect(() => new DetailThread(payload)).toThrowError(
-      'ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'DETAIL_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION'
     );
   });
 
@@ -33,7 +33,7 @@ describe('a DetailThraed entities', () => {
       id: 'thread-123',
       title: 'title',
       body: 'body',
-      date: '2021-08-08T07:19:09.775Z',
+      date: new Date(),
       username: 'username',
       comments: [
         { id: 'id', username: 'username', date: 'date', content: 'content' },
