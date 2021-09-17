@@ -10,15 +10,16 @@ describe('GetDetailThreadUseCase', () => {
       id: 'thread-h_2FkLZhtgBKY2kh4CC02',
       title: 'sebuah thread',
       body: 'sebuah body thread',
-      date: '2021-08-08T07:19:09.775Z',
+      date: new Date(),
       username: 'dicoding',
     };
     const expectedComments = [
       {
         id: 'comment-_pby2_tmXV6bcvcdev8xk',
         username: 'johndoe',
-        date: '2021-08-08T07:22:33.555Z',
+        date: new Date(),
         content: 'sebuah comment',
+        replies: [],
       },
     ];
 
@@ -42,12 +43,12 @@ describe('GetDetailThreadUseCase', () => {
 
     const detailThread = await getDetailThreadUseCase.execute(threadId);
 
-    expect(detailThread).toStrictEqual(
-      new DetailThread({
+    expect(detailThread).toStrictEqual({
+      ...new DetailThread({
         ...expectedDetailThread,
         comments: expectedComments,
-      })
-    );
+      }),
+    });
     expect(mockThreadRepository.isThreadExist).toBeCalledWith(threadId);
     expect(mockThreadRepository.getDetailThreadById).toBeCalledWith(threadId);
     expect(mockCommentRepository.getCommentsByThreadId).toBeCalledWith(

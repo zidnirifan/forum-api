@@ -1,3 +1,4 @@
+const DetailComment = require('../../Domains/comments/entities/DetailComment');
 const DetailThread = require('../../Domains/threads/entities/DetailThread');
 
 class GetDetailThreadUseCase {
@@ -14,7 +15,19 @@ class GetDetailThreadUseCase {
     const comments = await this._commentRepository.getCommentsByThreadId(
       threadId
     );
-    return new DetailThread({ ...detailThread, comments });
+    const commentsMapped = comments
+      .map((comment) => ({
+        ...comment,
+        replies: [],
+      }))
+      .map((comment) => ({ ...new DetailComment(comment) }));
+
+    return {
+      ...new DetailThread({
+        ...detailThread,
+        comments: commentsMapped,
+      }),
+    };
   }
 }
 
