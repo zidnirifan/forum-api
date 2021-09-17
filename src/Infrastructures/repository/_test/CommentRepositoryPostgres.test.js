@@ -153,5 +153,26 @@ describe('CommentRepositoryPostgres', () => {
       expect(comments[0].username).toBeDefined();
       expect(comments[0].date).toBeDefined();
     });
+
+    it('should show **komentar telah dihapus** when comment is deleted', async () => {
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ threadId, id: commentId });
+      await CommentsTableTestHelper.deleteComment(commentId);
+
+      const comments = await commentRepositoryPostgres.getCommentsByThreadId(
+        threadId
+      );
+
+      expect(comments[0].content).toEqual('**komentar telah dihapus**');
+      expect(Array.isArray(comments)).toBeTruthy();
+      expect(comments).toHaveLength(1);
+      expect(comments[0].id).toBeDefined();
+      expect(comments[0].username).toBeDefined();
+      expect(comments[0].date).toBeDefined();
+    });
   });
 });
