@@ -29,9 +29,9 @@ class CommentRepositoryPostgres extends CommentRepository {
       values: [commentId],
     };
 
-    const result = await this._pool.query(query);
+    const { rowCount } = await this._pool.query(query);
 
-    if (!result.rowCount) throw new NotFoundError('Comment tidak ditemukan');
+    if (!rowCount) throw new NotFoundError('Comment tidak ditemukan');
   }
 
   async verifyCommentOwner({ commentId, owner }) {
