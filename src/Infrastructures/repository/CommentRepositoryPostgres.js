@@ -3,6 +3,7 @@ const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const mapDeletedComments = require('../../Commons/mapDeletedComments');
 const CommentRepository = require('../../Domains/comments/CommentRepository');
 const AddedComment = require('../../Domains/comments/entities/AddedComment');
+const DetailComment = require('../../Domains/comments/entities/DetailComment');
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
@@ -69,7 +70,9 @@ class CommentRepositoryPostgres extends CommentRepository {
     };
 
     const { rows, rowCount } = await this._pool.query(query);
-    return rowCount ? mapDeletedComments(rows) : [];
+    return rowCount
+      ? mapDeletedComments(rows).map((comment) => new DetailComment(comment))
+      : [];
   }
 }
 
