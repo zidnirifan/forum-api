@@ -116,18 +116,15 @@ describe('CommentRepositoryPostgres', () => {
 
   describe('deleteComment function', () => {
     it('should update is_delete to true', async () => {
-      const payload = {
-        owner: 'user-123',
-        commentId: 'comment-123',
-      };
+      const commentId = 'comment-123';
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
-      await CommentsTableTestHelper.addComment(payload);
-      await commentRepositoryPostgres.deleteComment(payload.commentId);
+      await CommentsTableTestHelper.addComment({ id: commentId });
+      await commentRepositoryPostgres.deleteComment(commentId);
 
       const deletedComment = await CommentsTableTestHelper.findCommentById(
-        payload.commentId
+        commentId
       );
 
       expect(deletedComment[0].is_delete).toEqual(true);
