@@ -1,5 +1,6 @@
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
@@ -18,6 +19,17 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
     const { rows } = await this._pool.query(query);
     return new AddedReply(...rows);
+  }
+
+  async isReplyExist(replyId) {
+    const query = {
+      text: 'SELECT id FROM replies WHERE id = $1',
+      values: [replyId],
+    };
+
+    const { rowCount } = await this._pool.query(query);
+
+    if (!rowCount) throw new NotFoundError('Balasan tidak ditemukan');
   }
 }
 

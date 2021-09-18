@@ -6,6 +6,7 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 
 describe('ReplyRepositoryPostgres', () => {
   beforeEach(async () => {
@@ -50,6 +51,29 @@ describe('ReplyRepositoryPostgres', () => {
       });
       expect(foundReply).toHaveLength(1);
       expect(addedReply).toStrictEqual(expectedAddedReply);
+    });
+  });
+
+  describe('isReplyExist function', () => {
+    it('should throw NotFoundError when reply is not exist', async () => {
+      const replyId = 'reply-99';
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      await expect(
+        replyRepositoryPostgres.isReplyExist(replyId)
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should not throw NotFoundError when reply is exist', async () => {
+      const replyId = 'reply-123';
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+      await RepliesTableTestHelper.addReply({ id: replyId });
+
+      await expect(
+        replyRepositoryPostgres.isReplyExist(replyId)
+      ).resolves.not.toThrowError(NotFoundError);
     });
   });
 });
