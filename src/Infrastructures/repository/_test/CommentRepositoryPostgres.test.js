@@ -131,7 +131,7 @@ describe('CommentRepositoryPostgres', () => {
     });
   });
 
-  describe('getCommentById', () => {
+  describe('getCommentsByThreadId', () => {
     it('should return comment correctly', async () => {
       const threadId = 'thread-123';
 
