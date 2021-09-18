@@ -6,7 +6,7 @@ const RepliesTableTestHelper = {
     id = 'reply-123',
     content = 'reply',
     owner = 'user-123',
-    commentId = 'thread-123',
+    commentId = 'comment-123',
   }) {
     const query = {
       text: 'INSERT INTO replies VALUES($1, $2, NOW(), $3, $4)',
