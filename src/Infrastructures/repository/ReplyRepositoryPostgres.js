@@ -43,7 +43,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
     const { rows } = await this._pool.query(query);
 
-    const replyOwner = rows[0].owner;
+    const { owner: replyOwner } = rows[0];
 
     if (replyOwner !== owner) {
       throw new AuthorizationError('Anda bukan pemilik balasan ini');

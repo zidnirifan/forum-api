@@ -41,9 +41,9 @@ class CommentRepositoryPostgres extends CommentRepository {
       values: [commentId],
     };
 
-    const result = await this._pool.query(query);
+    const { rows } = await this._pool.query(query);
 
-    const commentOwner = result.rows[0].owner;
+    const { owner: commentOwner } = rows[0];
 
     if (commentOwner !== owner) {
       throw new AuthorizationError('Anda bukan pemilik comment ini');
