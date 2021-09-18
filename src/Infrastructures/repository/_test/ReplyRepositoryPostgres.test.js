@@ -115,4 +115,21 @@ describe('ReplyRepositoryPostgres', () => {
       ).resolves.not.toThrowError(AuthorizationError);
     });
   });
+
+  describe('deleteReply function', () => {
+    it('should update is_delete to true', async () => {
+      const replyId = 'reply-123';
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      await RepliesTableTestHelper.addReply({
+        id: replyId,
+      });
+      await replyRepositoryPostgres.deleteReply(replyId);
+
+      const deletedReply = await RepliesTableTestHelper.findReplyById(replyId);
+
+      expect(deletedReply[0].is_delete).toEqual(true);
+    });
+  });
 });
