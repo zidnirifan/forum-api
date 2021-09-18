@@ -1,6 +1,7 @@
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
@@ -30,6 +31,21 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     const { rowCount } = await this._pool.query(query);
 
     if (!rowCount) throw new NotFoundError('Balasan tidak ditemukan');
+  }
+
+  async verifyReplyOwner({ replyId, owner }) {
+    const query = {
+      text: 'SELECT owner FROM replies WHERE id = $1',
+      values: [replyId],
+    };
+
+    const { rows } = await this._pool.query(query);
+
+    const replyOwner = rows[0].owner;
+
+    if (replyOwner !== owner) {
+      throw new AuthorizationError('Anda bukan pemilik balasan ini');
+    }
   }
 }
 

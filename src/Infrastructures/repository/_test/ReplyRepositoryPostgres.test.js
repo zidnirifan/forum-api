@@ -7,6 +7,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 
 describe('ReplyRepositoryPostgres', () => {
   beforeEach(async () => {
@@ -74,6 +75,44 @@ describe('ReplyRepositoryPostgres', () => {
       await expect(
         replyRepositoryPostgres.isReplyExist(replyId)
       ).resolves.not.toThrowError(NotFoundError);
+    });
+  });
+
+  describe('verifyReplyOwner function', () => {
+    it('should throw AuthorizationError when he is not owner of the reply', async () => {
+      const payload = {
+        owner: 'user-99',
+        replyId: 'reply-123',
+      };
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      await RepliesTableTestHelper.addReply({
+        owner: 'user-123',
+        id: payload.replyId,
+      });
+
+      await expect(
+        replyRepositoryPostgres.verifyReplyOwner(payload)
+      ).rejects.toThrowError(AuthorizationError);
+    });
+
+    it('should not throw AuthorizationError when he is owner of the reply', async () => {
+      const payload = {
+        owner: 'user-123',
+        replyId: 'reply-123',
+      };
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      await RepliesTableTestHelper.addReply({
+        owner: payload.owner,
+        id: payload.replyId,
+      });
+
+      await expect(
+        replyRepositoryPostgres.verifyReplyOwner(payload)
+      ).resolves.not.toThrowError(AuthorizationError);
     });
   });
 });
