@@ -1,6 +1,6 @@
-const mapDeletedReply = require('../mapDeletedReply');
+const mapDeletedReplies = require('../mapDeletedReplies');
 
-describe('mapDeletedReply', () => {
+describe('mapDeletedReplies', () => {
   it('should change content value to **balasan telah dihapus** when is_delete is true', () => {
     const replies = [
       {
@@ -12,7 +12,7 @@ describe('mapDeletedReply', () => {
       },
     ];
 
-    const repliesMapped = mapDeletedReply(replies);
+    const repliesMapped = mapDeletedReplies(replies);
     expect(repliesMapped[0].content).toEqual('**balasan telah dihapus**');
   });
 
@@ -27,7 +27,7 @@ describe('mapDeletedReply', () => {
       },
     ];
 
-    const repliesMapped = mapDeletedReply(replies);
+    const repliesMapped = mapDeletedReplies(replies);
     expect(repliesMapped[0].content).toEqual(replies[0].content);
   });
 });
