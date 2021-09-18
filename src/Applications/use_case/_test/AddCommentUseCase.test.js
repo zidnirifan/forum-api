@@ -13,7 +13,7 @@ describe('AddCommentUseCase', () => {
     };
 
     const expectedAddedComment = new AddedComment({
-      id: 'thread-123',
+      id: 'comment-123',
       content: payload.content,
       owner: payload.owner,
     });
