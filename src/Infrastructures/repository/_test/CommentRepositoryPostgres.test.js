@@ -25,7 +25,7 @@ describe('CommentRepositoryPostgres', () => {
   });
 
   describe('addComment function', () => {
-    it('should persist new thread and return added thread correctly', async () => {
+    it('should persist new comment and return added comment correctly', async () => {
       const newComment = new NewComment({
         content: 'title',
         owner: 'user-123',
