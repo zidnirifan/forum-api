@@ -2,6 +2,7 @@ const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
+const mapDeletedReplies = require('../../Commons/mapDeletedReplies');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
@@ -55,6 +56,20 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     };
 
     await this._pool.query(query);
+  }
+
+  async getRepliesByCommentId(commentId) {
+    const query = {
+      text: `SELECT R.id, R.content, R.date, R.is_delete, U.username
+              FROM replies AS R JOIN users AS U
+              ON U.id = R.owner
+              WHERE R.comment_id = $1
+              ORDER BY R.date ASC`,
+      values: [commentId],
+    };
+
+    const { rows, rowCount } = await this._pool.query(query);
+    return rowCount ? mapDeletedReplies(rows) : [];
   }
 }
 
