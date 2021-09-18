@@ -18,7 +18,6 @@ describe('a DetailComment entities', () => {
       username: true,
       date: 99,
       content: 123,
-      replies: {},
     };
 
     expect(() => new DetailComment(payload)).toThrowError(
@@ -32,17 +31,13 @@ describe('a DetailComment entities', () => {
       username: 'user',
       date: new Date(),
       content: 'comment',
-      replies: [
-        { id: 'reply-123', content: 'reply', date: '23456', username: 'user' },
-      ],
     };
 
-    const { id, content, username, date, replies } = new DetailComment(payload);
+    const { id, content, username, date } = new DetailComment(payload);
 
     expect(id).toEqual(payload.id);
     expect(username).toEqual(payload.username);
     expect(date).toEqual(payload.date);
     expect(content).toEqual(payload.content);
-    expect(replies).toStrictEqual(payload.replies);
   });
 });

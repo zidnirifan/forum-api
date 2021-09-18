@@ -2,17 +2,16 @@ class DetailComment {
   constructor(payload) {
     this._verifyPayload(payload);
 
-    const { id, content, username, date, replies } = payload;
+    const { id, content, username, date } = payload;
 
     this.id = id;
     this.content = content;
     this.username = username;
     this.date = date;
-    this.replies = replies;
   }
 
-  _verifyPayload({ id, content, username, date, replies }) {
-    if (!id || !content || !username || !date || !replies) {
+  _verifyPayload({ id, content, username, date }) {
+    if (!id || !content || !username || !date) {
       throw new Error('DETAIL_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
@@ -20,8 +19,7 @@ class DetailComment {
       typeof id !== 'string' ||
       typeof content !== 'string' ||
       typeof username !== 'string' ||
-      typeof date !== 'object' ||
-      !Array.isArray(replies)
+      typeof date !== 'object'
     ) {
       throw new Error('DETAIL_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
