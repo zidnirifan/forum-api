@@ -88,27 +88,6 @@ describe('/threads endpoint', () => {
       );
     });
 
-    it(`should response 401 status code and show Missing Authentication message
-      when miss authentication`, async () => {
-      const requestPayload = {
-        title: 'title',
-        body: 'body',
-      };
-
-      const server = await createServer(container);
-
-      const response = await server.inject({
-        url: '/threads',
-        method: 'POST',
-        payload: requestPayload,
-      });
-
-      const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(401);
-      expect(responseJson.error).toEqual('Unauthorized');
-      expect(responseJson.message).toEqual('Missing authentication');
-    });
-
     it('should response 400 status code when request payload not meet data type specification', async () => {
       const requestPayload = {
         title: 123,
@@ -165,7 +144,7 @@ describe('/threads endpoint', () => {
     });
   });
 
-  describe('when GET /threads/threadId', () => {
+  describe('when GET /threads/{threadId}', () => {
     it('should response 200 and detail thread', async () => {
       const threadId = 'thread-123';
 
