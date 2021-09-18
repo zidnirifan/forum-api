@@ -146,7 +146,8 @@ describe('/threads/{threadId}/comments endpoint', () => {
   });
 
   describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
-    it('should response 200 status code if threadId and commentId valid', async () => {
+    it(`should response 200 status code if threadId and commentId valid 
+      and using owner user`, async () => {
       const threadId = 'thread-123';
       const commentId = 'comment-123';
 
