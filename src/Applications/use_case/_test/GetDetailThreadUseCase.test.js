@@ -2,6 +2,7 @@ const GetDetailThreadUseCase = require('../GetDetailThreadUseCase');
 const DetailThread = require('../../../Domains/threads/entities/DetailThread');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
+const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
 
 describe('GetDetailThreadUseCase', () => {
   it('should orchestrating the get detail thread action correctly', async () => {
@@ -15,16 +16,24 @@ describe('GetDetailThreadUseCase', () => {
     };
     const expectedComments = [
       {
-        id: 'comment-_pby2_tmXV6bcvcdev8xk',
+        id: 'comment-99',
         username: 'johndoe',
         date: new Date(),
         content: 'sebuah comment',
-        replies: [],
+      },
+    ];
+    const expectedReplies = [
+      {
+        id: 'reply-123',
+        username: 'user',
+        date: new Date(),
+        content: 'balasan',
       },
     ];
 
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
+    const mockReplyReposiotry = new ReplyRepository();
 
     mockThreadRepository.getDetailThreadById = jest
       .fn()
@@ -35,18 +44,27 @@ describe('GetDetailThreadUseCase', () => {
     mockCommentRepository.getCommentsByThreadId = jest
       .fn()
       .mockImplementation(() => Promise.resolve(expectedComments));
+    mockReplyReposiotry.getRepliesByCommentId = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve(expectedReplies));
 
     const getDetailThreadUseCase = new GetDetailThreadUseCase({
       commentRepository: mockCommentRepository,
       threadRepository: mockThreadRepository,
+      replyRepository: mockReplyReposiotry,
     });
 
     const detailThread = await getDetailThreadUseCase.execute(threadId);
 
+    const commentsMapped = expectedComments.map((comment) => ({
+      ...comment,
+      replies: expectedReplies,
+    }));
+
     expect(detailThread).toStrictEqual({
       ...new DetailThread({
         ...expectedDetailThread,
-        comments: expectedComments,
+        comments: commentsMapped,
       }),
     });
     expect(mockThreadRepository.isThreadExist).toBeCalledWith(threadId);
@@ -54,5 +72,6 @@ describe('GetDetailThreadUseCase', () => {
     expect(mockCommentRepository.getCommentsByThreadId).toBeCalledWith(
       threadId
     );
+    expect(mockReplyReposiotry.getRepliesByCommentId).toBeCalledTimes(1);
   });
 });
