@@ -3,6 +3,7 @@ const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const mapDeletedReplies = require('../../Commons/mapDeletedReplies');
+const DetailReply = require('../../Domains/replies/entities/DetailReply');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
@@ -69,7 +70,9 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     };
 
     const { rows, rowCount } = await this._pool.query(query);
-    return rowCount ? mapDeletedReplies(rows) : [];
+    return rowCount
+      ? mapDeletedReplies(rows).map((reply) => new DetailReply(reply))
+      : [];
   }
 }
 
