@@ -2,16 +2,16 @@ class DetailReply {
   constructor(payload) {
     this._verifyPayload(payload);
 
-    const { id, content, username, date } = payload;
+    const { id, content, username, date, is_delete } = payload;
 
     this.id = id;
-    this.content = content;
+    this.content = is_delete ? '**balasan telah dihapus**' : content;
     this.username = username;
     this.date = date;
   }
 
-  _verifyPayload({ id, content, username, date }) {
-    if (!id || !content || !username || !date) {
+  _verifyPayload({ id, content, username, date, is_delete }) {
+    if (!id || !content || !username || !date || is_delete === undefined) {
       throw new Error('DETAIL_REPLY.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
@@ -19,7 +19,8 @@ class DetailReply {
       typeof id !== 'string' ||
       typeof content !== 'string' ||
       typeof username !== 'string' ||
-      typeof date !== 'object'
+      typeof date !== 'object' ||
+      typeof is_delete !== 'boolean'
     ) {
       throw new Error('DETAIL_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }

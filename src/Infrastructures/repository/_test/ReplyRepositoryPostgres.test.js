@@ -153,27 +153,6 @@ describe('ReplyRepositoryPostgres', () => {
       expect(replies[0].date).toBeDefined();
     });
 
-    it('should show **balasan telah dihapus** when reply is deleted', async () => {
-      const commentId = 'comment-123';
-      const replyId = 'reply-123';
-
-      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
-
-      await RepliesTableTestHelper.addReply({ commentId, id: replyId });
-      await RepliesTableTestHelper.deleteReply(replyId);
-
-      const replies = await replyRepositoryPostgres.getRepliesByCommentId(
-        commentId
-      );
-
-      expect(replies[0].content).toEqual('**balasan telah dihapus**');
-      expect(Array.isArray(replies)).toBeTruthy();
-      expect(replies).toHaveLength(1);
-      expect(replies[0].id).toBeDefined();
-      expect(replies[0].username).toBeDefined();
-      expect(replies[0].date).toBeDefined();
-    });
-
     it('should return blank array when replies not found', async () => {
       const commentId = 'thread-123';
 

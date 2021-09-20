@@ -18,11 +18,38 @@ describe('a DetailReply entities', () => {
       username: true,
       date: 99,
       content: 123,
+      is_delete: 'true',
     };
 
     expect(() => new DetailReply(payload)).toThrowError(
       'DETAIL_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION'
     );
+  });
+
+  it('should change content value to **balasan telah dihapus** when is_delete is true', () => {
+    const payload = {
+      id: 'reply-123',
+      username: 'user',
+      date: new Date(),
+      content: 'reply',
+      is_delete: true,
+    };
+
+    const { content } = new DetailReply(payload);
+    expect(content).toEqual('**balasan telah dihapus**');
+  });
+
+  it('should not change content value to **balasan telah dihapus** when is_delete is false', () => {
+    const payload = {
+      id: 'reply-123',
+      username: 'user',
+      date: new Date(),
+      content: 'reply',
+      is_delete: false,
+    };
+
+    const { content } = new DetailReply(payload);
+    expect(content).toEqual(payload.content);
   });
 
   it('should create DetailReply object correctly', () => {
@@ -31,6 +58,7 @@ describe('a DetailReply entities', () => {
       username: 'user',
       date: new Date(),
       content: 'reply',
+      is_delete: false,
     };
 
     const { id, content, username, date } = new DetailReply(payload);

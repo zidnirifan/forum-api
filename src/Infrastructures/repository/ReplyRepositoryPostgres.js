@@ -2,7 +2,6 @@ const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
-const mapDeletedReplies = require('../../Commons/mapDeletedReplies');
 const DetailReply = require('../../Domains/replies/entities/DetailReply');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
@@ -69,10 +68,8 @@ class ReplyRepositoryPostgres extends ReplyRepository {
       values: [commentId],
     };
 
-    const { rows, rowCount } = await this._pool.query(query);
-    return rowCount
-      ? mapDeletedReplies(rows).map((reply) => new DetailReply(reply))
-      : [];
+    const { rows } = await this._pool.query(query);
+    return rows.map((reply) => new DetailReply(reply));
   }
 }
 
