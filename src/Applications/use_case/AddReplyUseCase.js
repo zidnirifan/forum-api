@@ -11,8 +11,7 @@ class AddReplyUseCase {
     await this._threadRepository.isThreadExist(payload.threadId);
     await this._commentRepository.isCommentExist(payload.commentId);
     const newReply = new NewReply(payload);
-    const addedReply = await this._replyRepository.addReply(newReply);
-    return addedReply;
+    return this._replyRepository.addReply(newReply);
   }
 }
 

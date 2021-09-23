@@ -24,15 +24,11 @@ describe('AddReplyUseCase', () => {
     const mockCommentRepository = new CommentRepository();
     const mockThreadRepository = new ThreadRepository();
 
-    mockReplyRepository.addReply = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve(expectedAddedReply));
-    mockCommentRepository.isCommentExist = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve());
-    mockThreadRepository.isThreadExist = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.addReply = jest.fn(() =>
+      Promise.resolve(expectedAddedReply)
+    );
+    mockCommentRepository.isCommentExist = jest.fn(() => Promise.resolve());
+    mockThreadRepository.isThreadExist = jest.fn(() => Promise.resolve());
 
     const addReplyUseCase = new AddReplyUseCase({
       replyRepository: mockReplyRepository,
