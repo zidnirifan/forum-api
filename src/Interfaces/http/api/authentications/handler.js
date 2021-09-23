@@ -6,6 +6,23 @@ class AuthenticationsHandler {
   constructor(container) {
     this._container = container;
 
+    this.authStrategy = {
+      keys: process.env.ACCESS_TOKEN_KEY,
+      verify: {
+        aud: false,
+        iss: false,
+        sub: false,
+        maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      },
+      validate: (artifacts) => ({
+        isValid: true,
+        credentials: {
+          id: artifacts.decoded.payload.id,
+          username: artifacts.decoded.payload.username,
+        },
+      }),
+    };
+
     this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
     this.putAuthenticationHandler = this.putAuthenticationHandler.bind(this);
     this.deleteAuthenticationHandler =

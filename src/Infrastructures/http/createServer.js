@@ -20,24 +20,6 @@ const createServer = async (container) => {
     },
   ]);
 
-  // mendefinisikan strategy autentikasi jwt
-  server.auth.strategy('forum_api_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
-    verify: {
-      aud: false,
-      iss: false,
-      sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
-    },
-    validate: (artifacts) => ({
-      isValid: true,
-      credentials: {
-        id: artifacts.decoded.payload.id,
-        username: artifacts.decoded.payload.username,
-      },
-    }),
-  });
-
   await server.register([
     {
       plugin: errors,
