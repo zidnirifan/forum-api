@@ -227,4 +227,33 @@ describe('CommentRepositoryPostgres', () => {
       expect(foundAddedLike[0].user_id).toEqual(userId);
     });
   });
+
+  describe('unlikeComment function', () => {
+    it('should delete liked comment from user_comment_likes table', async () => {
+      const commentId = 'comment-123';
+      const userId = 'user-123';
+      const likedCommentId = 'comment-like-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+      await UsersCommentLikesTableTestHelper.likeComment({
+        commentId,
+        userId,
+        id: likedCommentId,
+      });
+
+      await commentRepositoryPostgres.unlikeComment({
+        commentId,
+        userId,
+      });
+
+      const likedComment =
+        await UsersCommentLikesTableTestHelper.findLikeCommentById(
+          likedCommentId
+        );
+
+      expect(likedComment).toHaveLength(0);
+    });
+  });
 });

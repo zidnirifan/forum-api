@@ -94,6 +94,16 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     await this._pool.query(query);
   }
+
+  async unlikeComment({ commentId, userId }) {
+    const query = {
+      text: `DELETE FROM user_comment_likes 
+              WHERE comment_id = $1 AND user_id = $2`,
+      values: [commentId, userId],
+    };
+
+    await this._pool.query(query);
+  }
 }
 
 module.exports = CommentRepositoryPostgres;
