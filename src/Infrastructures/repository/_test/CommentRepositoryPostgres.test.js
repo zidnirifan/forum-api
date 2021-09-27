@@ -19,6 +19,7 @@ describe('CommentRepositoryPostgres', () => {
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
+    await UsersCommentLikesTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -195,6 +196,35 @@ describe('CommentRepositoryPostgres', () => {
       });
 
       expect(isCommentLiked).toBeFalsy();
+    });
+  });
+
+  describe('likeComment function', () => {
+    it('should add commentId and userId to user_comment_likes table', async () => {
+      const commentId = 'comment-123';
+      const userId = 'user-123';
+
+      const fakeIdGenerator = () => '123';
+      const expectedId = 'comment-like-123';
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+
+      await commentRepositoryPostgres.likeComment({
+        commentId,
+        userId,
+      });
+
+      const foundAddedLike =
+        await UsersCommentLikesTableTestHelper.findLikeCommentById(expectedId);
+
+      expect(foundAddedLike).toHaveLength(1);
+      expect(foundAddedLike[0].id).toEqual(expectedId);
+      expect(foundAddedLike[0].comment_id).toEqual(commentId);
+      expect(foundAddedLike[0].user_id).toEqual(userId);
     });
   });
 });

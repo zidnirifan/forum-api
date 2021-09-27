@@ -83,6 +83,17 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     return !!rowCount;
   }
+
+  async likeComment({ commentId, userId }) {
+    const id = `comment-like-${this._idGenerator()}`;
+
+    const query = {
+      text: 'INSERT INTO user_comment_likes VALUES($1, $2, $3)',
+      values: [id, userId, commentId],
+    };
+
+    await this._pool.query(query);
+  }
 }
 
 module.exports = CommentRepositoryPostgres;
