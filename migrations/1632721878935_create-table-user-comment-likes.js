@@ -1,17 +1,17 @@
 exports.up = (pgm) => {
   pgm.createTable('user_comment_likes', {
     id: {
-      type: 'VARCHAR(30)',
+      type: 'VARCHAR(50)',
       primaryKey: true,
     },
     user_id: {
-      type: 'VARCHAR(30)',
+      type: 'VARCHAR(50)',
       notNull: true,
       references: '"users"',
       onDelete: 'cascade',
     },
     comment_id: {
-      type: 'VARCHAR(30)',
+      type: 'VARCHAR(50)',
       notNull: true,
       references: '"comments"',
       onDelete: 'cascade',
