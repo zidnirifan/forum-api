@@ -9,9 +9,10 @@ class LikeUnlikeCommentUseCase {
     const { commentId, userId, threadId } = payload;
     await this._threadRepository.isThreadExist(threadId);
     await this._commentRepository.isCommentExist(commentId);
-    const isCommentLiked = await this._commentRepository.isCommentLiked(
-      commentId
-    );
+    const isCommentLiked = await this._commentRepository.isCommentLiked({
+      commentId,
+      userId,
+    });
 
     if (isCommentLiked) {
       await this._commentRepository.unlikeComment({ commentId, userId });

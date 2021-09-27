@@ -59,7 +59,10 @@ describe('LikeUnlikeCommentUseCase', () => {
 
     await likeUnlikeCommentUseCase.execute(payload);
 
-    expect(mockCommentRepository.isCommentLiked).toBeCalledWith(commentId);
+    expect(mockCommentRepository.isCommentLiked).toBeCalledWith({
+      commentId,
+      userId,
+    });
     expect(mockCommentRepository.likeComment).toBeCalledWith({
       commentId,
       userId,
@@ -92,7 +95,10 @@ describe('LikeUnlikeCommentUseCase', () => {
 
     await likeUnlikeCommentUseCase.execute(payload);
 
-    expect(mockCommentRepository.isCommentLiked).toBeCalledWith(commentId);
+    expect(mockCommentRepository.isCommentLiked).toBeCalledWith({
+      commentId,
+      userId,
+    });
     expect(mockCommentRepository.unlikeComment).toBeCalledWith({
       commentId,
       userId,
