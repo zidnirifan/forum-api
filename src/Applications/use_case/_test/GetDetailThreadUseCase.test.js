@@ -42,6 +42,9 @@ describe('GetDetailThreadUseCase', () => {
     mockCommentRepository.getCommentsByThreadId = jest.fn(() =>
       Promise.resolve(expectedComments)
     );
+    mockCommentRepository.getLikeCountByCommentId = jest.fn(() =>
+      Promise.resolve(0)
+    );
     mockReplyReposiotry.getRepliesByCommentId = jest.fn(() =>
       Promise.resolve(expectedReplies)
     );
@@ -57,6 +60,7 @@ describe('GetDetailThreadUseCase', () => {
     const commentsMapped = expectedComments.map((comment) => ({
       ...comment,
       replies: expectedReplies,
+      likeCount: 0,
     }));
 
     expect(detailThread).toStrictEqual({
@@ -70,6 +74,7 @@ describe('GetDetailThreadUseCase', () => {
     expect(mockCommentRepository.getCommentsByThreadId).toBeCalledWith(
       threadId
     );
+    expect(mockCommentRepository.getLikeCountByCommentId).toBeCalledTimes(1);
     expect(mockReplyReposiotry.getRepliesByCommentId).toBeCalledTimes(1);
   });
 });
