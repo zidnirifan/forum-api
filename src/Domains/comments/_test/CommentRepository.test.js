@@ -28,5 +28,8 @@ describe('CommentRepository interface', () => {
     await expect(commentRepository.unlikeComment({})).rejects.toThrowError(
       'COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED'
     );
+    await expect(
+      commentRepository.getLikeCountByCommentId('')
+    ).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

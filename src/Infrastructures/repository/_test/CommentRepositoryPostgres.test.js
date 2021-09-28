@@ -256,4 +256,35 @@ describe('CommentRepositoryPostgres', () => {
       expect(likedComment).toHaveLength(0);
     });
   });
+
+  describe('getLikeCountByCommentId', () => {
+    it('should return likeCount correctly', async () => {
+      const commentId = 'comment-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+      await UsersCommentLikesTableTestHelper.likeComment({ commentId });
+
+      const likeCount = await commentRepositoryPostgres.getLikeCountByCommentId(
+        commentId
+      );
+
+      expect(likeCount).toEqual(1);
+    });
+
+    it('should retun 0 when comment not liked', async () => {
+      const commentId = 'comment-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+
+      const likeCount = await commentRepositoryPostgres.getLikeCountByCommentId(
+        commentId
+      );
+
+      expect(likeCount).toEqual(0);
+    });
+  });
 });

@@ -30,6 +30,10 @@ class CommentRepository {
   async unlikeComment({ commentId, userId }) {
     throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
+
+  async getLikeCountByCommentId(commentId) {
+    throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
 }
 
 module.exports = CommentRepository;
