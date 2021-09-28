@@ -7,6 +7,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const UsersCommentLikesTableTestHelper = require('../../../../tests/UserCommentLikesTableTestHelper');
 
 describe('CommentRepositoryPostgres', () => {
   beforeEach(async () => {
@@ -18,6 +19,7 @@ describe('CommentRepositoryPostgres', () => {
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
+    await UsersCommentLikesTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -161,6 +163,128 @@ describe('CommentRepositoryPostgres', () => {
       );
 
       expect(comments).toEqual([]);
+    });
+  });
+
+  describe('isCommentLiked function', () => {
+    it('should return true when comment is liked', async () => {
+      const commentId = 'comment-123';
+      const userId = 'user-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+      await UsersCommentLikesTableTestHelper.likeComment({ commentId, userId });
+
+      const isCommentLiked = await commentRepositoryPostgres.isCommentLiked({
+        commentId,
+        userId,
+      });
+
+      expect(isCommentLiked).toBeTruthy();
+    });
+
+    it('should return false when comment is not liked', async () => {
+      const commentId = 'comment-123';
+      const userId = 'user-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      const isCommentLiked = await commentRepositoryPostgres.isCommentLiked({
+        commentId,
+        userId,
+      });
+
+      expect(isCommentLiked).toBeFalsy();
+    });
+  });
+
+  describe('likeComment function', () => {
+    it('should add commentId and userId to user_comment_likes table', async () => {
+      const commentId = 'comment-123';
+      const userId = 'user-123';
+
+      const fakeIdGenerator = () => '123';
+      const expectedId = 'comment-like-123';
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+
+      await commentRepositoryPostgres.likeComment({
+        commentId,
+        userId,
+      });
+
+      const foundAddedLike =
+        await UsersCommentLikesTableTestHelper.findLikeCommentById(expectedId);
+
+      expect(foundAddedLike).toHaveLength(1);
+      expect(foundAddedLike[0].id).toEqual(expectedId);
+      expect(foundAddedLike[0].comment_id).toEqual(commentId);
+      expect(foundAddedLike[0].user_id).toEqual(userId);
+    });
+  });
+
+  describe('unlikeComment function', () => {
+    it('should delete liked comment from user_comment_likes table', async () => {
+      const commentId = 'comment-123';
+      const userId = 'user-123';
+      const likedCommentId = 'comment-like-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+      await UsersCommentLikesTableTestHelper.likeComment({
+        commentId,
+        userId,
+        id: likedCommentId,
+      });
+
+      await commentRepositoryPostgres.unlikeComment({
+        commentId,
+        userId,
+      });
+
+      const likedComment =
+        await UsersCommentLikesTableTestHelper.findLikeCommentById(
+          likedCommentId
+        );
+
+      expect(likedComment).toHaveLength(0);
+    });
+  });
+
+  describe('getLikeCountByCommentId', () => {
+    it('should return likeCount correctly', async () => {
+      const commentId = 'comment-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+      await UsersCommentLikesTableTestHelper.likeComment({ commentId });
+
+      const likeCount = await commentRepositoryPostgres.getLikeCountByCommentId(
+        commentId
+      );
+
+      expect(likeCount).toEqual(1);
+    });
+
+    it('should retun 0 when comment not liked', async () => {
+      const commentId = 'comment-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await CommentsTableTestHelper.addComment({ id: commentId });
+
+      const likeCount = await commentRepositoryPostgres.getLikeCountByCommentId(
+        commentId
+      );
+
+      expect(likeCount).toEqual(0);
     });
   });
 });

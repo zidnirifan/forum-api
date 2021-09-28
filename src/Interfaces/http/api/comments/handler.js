@@ -1,5 +1,6 @@
 const AddCommentUseCase = require('../../../../Applications/use_case/AddCommentUseCase');
 const DeleteCommentUseCase = require('../../../../Applications/use_case/DeleteCommentUseCase');
+const LikeUnlikeCommentUseCase = require('../../../../Applications/use_case/LikeUnlikeCommentUseCase');
 
 class CommentsHandler {
   constructor(container) {
@@ -7,6 +8,8 @@ class CommentsHandler {
 
     this.postCommentHandler = this.postCommentHandler.bind(this);
     this.deleteCommentHandler = this.deleteCommentHandler.bind(this);
+    this.putLikeUnlikeCommentHandler =
+      this.putLikeUnlikeCommentHandler.bind(this);
   }
 
   async postCommentHandler({ payload, auth, params }, h) {
@@ -35,6 +38,16 @@ class CommentsHandler {
       DeleteCommentUseCase.name
     );
     await deleteCommentUseCase.execute({ ...params, owner });
+
+    return { status: 'success' };
+  }
+
+  async putLikeUnlikeCommentHandler({ params, auth }) {
+    const { id: userId } = auth.credentials;
+    const likeUnlikeCommentUseCase = this._container.getInstance(
+      LikeUnlikeCommentUseCase.name
+    );
+    await likeUnlikeCommentUseCase.execute({ ...params, userId });
 
     return { status: 'success' };
   }

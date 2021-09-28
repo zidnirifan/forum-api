@@ -71,6 +71,48 @@ class CommentRepositoryPostgres extends CommentRepository {
     const { rows } = await this._pool.query(query);
     return rows.map((comment) => new DetailComment(comment));
   }
+
+  async isCommentLiked({ commentId, userId }) {
+    const query = {
+      text: `SELECT * from user_comment_likes 
+              WHERE comment_id = $1 AND user_id = $2`,
+      values: [commentId, userId],
+    };
+
+    const { rowCount } = await this._pool.query(query);
+
+    return !!rowCount;
+  }
+
+  async likeComment({ commentId, userId }) {
+    const id = `comment-like-${this._idGenerator()}`;
+
+    const query = {
+      text: 'INSERT INTO user_comment_likes VALUES($1, $2, $3)',
+      values: [id, userId, commentId],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async unlikeComment({ commentId, userId }) {
+    const query = {
+      text: `DELETE FROM user_comment_likes 
+              WHERE comment_id = $1 AND user_id = $2`,
+      values: [commentId, userId],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async getLikeCountByCommentId(commentId) {
+    const query = {
+      text: 'SELECT COUNT(*) FROM user_comment_likes WHERE comment_id = $1',
+      values: [commentId],
+    };
+    const { rows } = await this._pool.query(query);
+    return Number(rows[0].count);
+  }
 }
 
 module.exports = CommentRepositoryPostgres;

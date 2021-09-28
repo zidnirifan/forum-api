@@ -16,17 +16,20 @@ class GetDetailThreadUseCase {
       threadId
     );
 
-    const commentsWithReplies = await Promise.all(
+    const commentsWithRepliesAndLikeCount = await Promise.all(
       comments.map(async (comment) => ({
         ...comment,
         replies: await this._replyRepository.getRepliesByCommentId(comment.id),
+        likeCount: await this._commentRepository.getLikeCountByCommentId(
+          comment.id
+        ),
       }))
     );
 
     return {
       ...new DetailThread({
         ...detailThread,
-        comments: commentsWithReplies,
+        comments: commentsWithRepliesAndLikeCount,
       }),
     };
   }

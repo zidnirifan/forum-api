@@ -4,6 +4,9 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const container = require('../../container');
 const createServer = require('../createServer');
 const ServerTestHelper = require('../../../../tests/ServerTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const UserCommentLikesTableTestHelper = require('../../../../tests/UserCommentLikesTableTestHelper');
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 
 describe('/threads endpoint', () => {
   afterAll(async () => {
@@ -177,6 +180,93 @@ describe('/threads endpoint', () => {
       expect(response.statusCode).toEqual(404);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('Thread tidak ditemukan');
+    });
+  });
+
+  describe('when GET /threads/{threadId} after thread commented', () => {
+    it('should response 200 and correct property and value', async () => {
+      const threadId = 'thread-123';
+
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+      await CommentsTableTestHelper.addComment({ threadId });
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        url: `/threads/${threadId}`,
+        method: 'GET',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      const { comments } = responseJson.data.thread;
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+      expect(comments).toHaveLength(1);
+      expect(comments[0].id).toBeDefined();
+      expect(comments[0].username).toBeDefined();
+      expect(comments[0].date).toBeDefined();
+      expect(comments[0].content).toBeDefined();
+    });
+  });
+
+  describe('when GET /threads/{threadId} after comment thread replied', () => {
+    it('should response 200 and correct property and value', async () => {
+      const threadId = 'thread-123';
+
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+      await CommentsTableTestHelper.addComment({ threadId });
+      await RepliesTableTestHelper.addReply({});
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        url: `/threads/${threadId}`,
+        method: 'GET',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      const { comments } = responseJson.data.thread;
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+      expect(comments).toHaveLength(1);
+      expect(comments[0].id).toBeDefined();
+      expect(comments[0].username).toBeDefined();
+      expect(comments[0].date).toBeDefined();
+      expect(comments[0].content).toBeDefined();
+      expect(comments[0].replies).toBeDefined();
+      expect(comments[0].replies).toHaveLength(1);
+    });
+  });
+
+  describe('when GET /threads/{threadId} after comment thread liked', () => {
+    it('should response 200 and correct property and value', async () => {
+      const threadId = 'thread-123';
+
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+      await CommentsTableTestHelper.addComment({ threadId });
+      await UserCommentLikesTableTestHelper.likeComment({});
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        url: `/threads/${threadId}`,
+        method: 'GET',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      const { comments } = responseJson.data.thread;
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+      expect(comments).toHaveLength(1);
+      expect(comments[0].id).toBeDefined();
+      expect(comments[0].username).toBeDefined();
+      expect(comments[0].date).toBeDefined();
+      expect(comments[0].content).toBeDefined();
+      expect(comments[0].likeCount).toBeDefined();
+      expect(comments[0].likeCount).toEqual(1);
     });
   });
 });
